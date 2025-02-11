@@ -43,11 +43,15 @@ Add the extension to your HTML and specify the topics to subscribe to:
 </form>
 ```
 
-### Backend Implementation (PocketPages)
+### Backend Implementation
+
+#### Using PocketPages
+
+> _See [PocketPages send()](https://pocketpages.dev/docs/context-api/send) for more information._
 
 Create an endpoint at `/api/chat.ejs`:
 
-```javascript
+```html
 <script server>
   const { message } = body()
   send('chat', `<div>${message}</div>`)
@@ -55,11 +59,53 @@ Create an endpoint at `/api/chat.ejs`:
 </script>
 ```
 
-This endpoint:
+Or using PocketPage's render capture feature for more complex content:
 
-1. Receives POST requests from the form and extracts the message from the request body
-2. Uses PocketPages' `send()` function to broadcast the message to all clients subscribed to the 'chat' topic
-3. Returns a success response (the form uses `hx-swap="none"` so the response isn't rendered)
+```html
+<script server>
+  const { message } = body()
+  send('chat')
+</script>
+<div class="chat-message">
+  <div class="message-sender"><%= auth.email() %></div>
+  <div class="message-content"><%= message %></div>
+  <div class="message-timestamp"><%= new Date().toLocaleTimeString() %></div>
+</div>
+```
+
+#### Using PocketBase JSVM
+
+Create a custom API endpoint in your PocketBase app:
+
+```javascript
+routerAdd('POST', '/api/chat', (c) => {
+  const data = $apis.requestInfo(c).data
+  const message = data.message
+
+  // Get all clients from the subscription broker
+  const clients = $app.subscriptionsBroker().clients()
+
+  // Filter clients that are subscribed to the 'chat' topic
+  Object.entries(clients)
+    .filter(([_, client]) => client.hasSubscription('chat'))
+    .forEach(([_, client]) => {
+      // Send the message to each subscribed client
+      client.send({
+        name: 'chat',
+        data: `<div>${message}</div>`,
+      })
+    })
+
+  return c.json({ result: 'ok' })
+})
+```
+
+This implementation:
+
+1. Gets all connected clients from PocketBase's subscription broker
+2. Filters for clients that are subscribed to the 'chat' topic
+3. Sends the formatted message directly to each subscribed client
+4. Returns a success response
 
 ### SSE Message Format
 
@@ -76,7 +122,7 @@ data:<div>asdf</div>
 
 id:NJMhEaQbJ4lJ7L5QIsenCCG8wzdH8mETTp2ncclX
 event:chat
-data:<div>jkl;</div>
+data:"<div>\n  <p>This is a multiline message</p>\n  <p>That was JSON encoded</p>\n</div>"
 ```
 
 The extension handles:
@@ -84,6 +130,8 @@ The extension handles:
 1. The initial `PB_CONNECT` event to establish the connection
 2. Automatic subscription to your specified topics
 3. Swapping the `data` content into your elements based on the matching `event` name
+
+> **Note:** The extension will attempt to parse any JSON-parsable strings in the `data` field. This is particularly useful for multiline content, which should be JSON encoded to properly fit within a single line in the SSE data stream. If parsing fails (i.e., the content is not valid JSON), the original string is used.
 
 ### Configuration Attributes
 
