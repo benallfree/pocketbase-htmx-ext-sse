@@ -287,6 +287,9 @@ This extension adds support for Server Sent Events to htmx.  See /www/extensions
    * @param {string} content
    */
   function swap(elt, content) {
+    try {
+      content = JSON.parse(content)
+    } catch (e) {}
     api.withExtensions(elt, function (extension) {
       content = extension.transformResponse(content, null, elt)
     })
