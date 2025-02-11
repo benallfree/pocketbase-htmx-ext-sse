@@ -1,6 +1,6 @@
 {
   "name": "pocketbase-htmx-ext-sse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/htmx-ext-sse.js",
   "browser": "src/htmx-ext-sse.js",
   "devDependencies": {
