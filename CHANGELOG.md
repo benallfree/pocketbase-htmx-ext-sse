@@ -1,5 +1,12 @@
 # pocketbase-htmx-ext-sse
 
+## 0.0.3
+
+### Patch Changes
+
+- Readme updates
+- package.json updates
+
 ## 0.0.2
 
 ### Patch Changes

@@ -1,6 +1,24 @@
 {
   "name": "pocketbase-htmx-ext-sse",
-  "version": "0.0.2",
+  "author": {
+    "name": "Ben ALlfree"
+  },
+  "description": "A pocketbase extension for htmx that adds SSE support",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benallfree/pocketbase-htmx-ext-sse"
+  },
+  "homepage": "https://github.com/benallfree/pocketbase-htmx-ext-sse",
+  "keywords": [
+    "pocketbase",
+    "pocketpages",
+    "pockethost",
+    "htmx",
+    "sse",
+    "extension"
+  ],
+  "version": "0.0.3",
   "main": "src/htmx-ext-sse.js",
   "browser": "src/htmx-ext-sse.js",
   "devDependencies": {
