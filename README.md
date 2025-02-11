@@ -49,17 +49,41 @@ Create an endpoint at `/api/chat.ejs`:
 
 ```javascript
 <script server>
-  // Send a message to all clients subscribed to the 'chat' topic
-  send('chat', `<div>hello</div>`)
+  const { message } = body()
+  send('chat', `<div>${message}</div>`)
   return { result: 'ok' }
 </script>
 ```
 
 This endpoint:
 
-1. Receives POST requests from the form
-2. Uses PocketPages' `send()` function to broadcast to the 'chat' topic
+1. Receives POST requests from the form and extracts the message from the request body
+2. Uses PocketPages' `send()` function to broadcast the message to all clients subscribed to the 'chat' topic
 3. Returns a success response (the form uses `hx-swap="none"` so the response isn't rendered)
+
+### SSE Message Format
+
+When you connect to the realtime endpoint, you'll receive messages in this format:
+
+```
+id:NJMhEaQbJ4lJ7L5QIsenCCG8wzdH8mETTp2ncclX
+event:PB_CONNECT
+data:{"clientId":"NJMhEaQbJ4lJ7L5QIsenCCG8wzdH8mETTp2ncclX"}
+
+id:NJMhEaQbJ4lJ7L5QIsenCCG8wzdH8mETTp2ncclX
+event:chat
+data:<div>asdf</div>
+
+id:NJMhEaQbJ4lJ7L5QIsenCCG8wzdH8mETTp2ncclX
+event:chat
+data:<div>jkl;</div>
+```
+
+The extension handles:
+
+1. The initial `PB_CONNECT` event to establish the connection
+2. Automatic subscription to your specified topics
+3. Swapping the `data` content into your elements based on the matching `event` name
 
 ### Configuration Attributes
 
