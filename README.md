@@ -6,6 +6,9 @@ A custom Server-Sent Events (SSE) extension for HTMX that integrates with Pocket
 
 This extension builds upon the [official HTMX SSE extension](https://htmx.org/extensions/sse/) but is specifically designed to work with [PocketBase's realtime API](https://pocketbase.io/docs/api-realtime/). It automatically handles PocketBase's connection protocol and subscription management.
 
+Demo: https://htmx-sse.pockethost.io/
+Demo code: https://github.com/benallfree/pocketpages/tree/main/starters/htmx
+
 ## Features
 
 - Automatic connection handling with PocketBase's realtime API
